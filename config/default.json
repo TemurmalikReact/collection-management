@@ -1,4 +1,5 @@
 {
     "port": "5000",
+    "jwtKey": "temurmalik react developer",
     "mongoUri": "mongodb+srv://temurmalikreact:KAMASUTRA@cluster0.atddtgr.mongodb.net/app?retryWrites=true&w=majority"
 } 

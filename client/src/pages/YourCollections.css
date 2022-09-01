@@ -1,0 +1,27 @@
+.card-text {
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgb(240, 240, 240);
+}
+
+.card-bottom {
+  padding: 15px 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-bottom i {
+  transform: translateX(25%);
+}
+
+.card-bottom span {
+  display: flex;
+  align-items: center;
+}
+
+.card-bottom span img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
