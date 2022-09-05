@@ -10,13 +10,7 @@ function App() {
   const isAuthenticated = !!token;
 
   const routes = useRoutes(isAuthenticated);
-  if (loading)
-    return (
-      <h1 className="row" style={{ padding: "0 50px" }}>
-        Loading...
-      </h1>
-    );
-
+  
   return (
     <AuthContext.Provider
       value={{

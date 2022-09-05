@@ -25,9 +25,13 @@ svg {
 }
 
 a {
-  color: #000 !important;
+  color: #000;
 }
 
 img {
   object-fit: cover !important;
+}
+
+i, button {
+  cursor: pointer;
 }
