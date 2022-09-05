@@ -4,10 +4,10 @@
   "description": "collection management",
   "main": "app.js",
   "scripts": {
-    "dev": "node app.js",
+    "start": "node app.js",
     "server": "nodemon app.js",
-    "client": "npm run dev --prefix client",
-    "start": "concurrently \"npm run server\" \"npm run client\""
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [
     "collection",
