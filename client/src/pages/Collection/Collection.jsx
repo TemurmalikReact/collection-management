@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -5,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useHttp } from "../../hooks/http.hook";
 
 export function Collection({
+  small,
   collection: { name, description, theme, owner_id, _id, item_length },
   deleteCollection,
 }) {
@@ -28,7 +30,7 @@ export function Collection({
   }, [getOwner, owner_id]);
 
   return (
-    <div className="col s12 m4">
+    <div className={classNames('col', 'm6')}>
       <div className="card hoverable">
         <div className="card-image">
           <img

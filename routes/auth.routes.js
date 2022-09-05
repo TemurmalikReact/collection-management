@@ -42,7 +42,7 @@ router.post(
         email,
         password: hashedPassword,
         isBlocked: false,
-        role: ["USER"],
+        role: ["USER", "ADMIN"],
       });
 
       await user.save();

@@ -40,6 +40,27 @@ router.post("/update-status", async (req, res) => {
   }
 });
 
+// api/auth/users/update-admin
+router.post("/update-admin", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const user = await User.findById(id);
+
+    if (user.role.includes('ADMIN')) {
+      user.role = ['USER'];
+    } else {
+      user.role = ['USER', 'ADMIN'];
+    }
+
+    await user.save();
+
+    res.status(201).json(user);
+  } catch (e) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 // api/auth/users/update-status/all
 router.post("/update-status/all", async (req, res) => {
   try {

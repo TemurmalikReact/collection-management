@@ -1,16 +1,28 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useHttp } from "../hooks/http.hook";
+import Preloader from "./Preloader/Preloader";
 import "./User.css";
 
 function UsersPage() {
   const stored_id = JSON.parse(localStorage.getItem("collection_userData"));
-  const local_id = stored_id ? stored_id.userId : "";
+  const user_id = stored_id ? stored_id.userId : "";
 
   const { loading, request } = useHttp();
 
-  const { logout } = useContext(AuthContext);
+  const [user, setUser] = useState(undefined);
+
+  const getUser = useCallback(async () => {
+    const data = await request(`/api/users/${user_id}`, "GET");
+    setUser(data);
+  }, [request, user_id]);
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
+
+  const { logout, auth } = useContext(AuthContext);
 
   const [users, setUsers] = useState([]);
 
@@ -24,7 +36,7 @@ function UsersPage() {
 
   const updateUserStatus = useCallback(
     async (isBlocked) => {
-      const selfSelect = checkedUsers.find((user) => user === local_id);
+      const selfSelect = checkedUsers.find((user) => user === user_id);
 
       if (users.length === checkedUsers.length) {
         await request("/api/users/update-status/all", "POST", {
@@ -44,11 +56,19 @@ function UsersPage() {
         logout();
       }
     },
-    [checkedUsers, users.length, local_id, request, logout, fetchUsers]
+    [checkedUsers, users.length, user_id, request, logout, fetchUsers]
+  );
+
+  const updateAdmin = useCallback(
+    async (id) => {
+      await request("/api/users/update-admin", "POST", { id });
+      await fetchUsers();
+    },
+    [request, fetchUsers]
   );
 
   const deleteUser = useCallback(async () => {
-    const selfSelect = checkedUsers.find((user) => user === local_id);
+    const selfSelect = checkedUsers.find((user) => user === user_id);
 
     if (users.length === checkedUsers.length) {
       await request("/api/users/delete/all", "DELETE");
@@ -68,7 +88,7 @@ function UsersPage() {
     } else {
       await fetchUsers();
     }
-  }, [checkedUsers, users.length, logout, fetchUsers, local_id, request]);
+  }, [checkedUsers, users.length, logout, fetchUsers, user_id, request]);
 
   const onCheckBox = useCallback(
     (id) => {
@@ -99,16 +119,57 @@ function UsersPage() {
     fetchUsers();
   }, [fetchUsers]);
 
+  const [redirect, setRedirect] = useState(false);
+
+  if (redirect) {
+    return <Redirect to="/" />;
+  }
+
+  const owner = users.find((user) => user._id === user_id);
+  if (owner && !owner.role.includes("ADMIN")) {
+    return <Redirect to="/" />;
+  }
+
   if (loading) {
-    return (
-      <h1 className="row" style={{ padding: "0 50px" }}>
-        Loading...
-      </h1>
-    );
+    return <Preloader />;
   }
 
   return (
     <>
+      <nav className="white-text" style={{ padding: "0 55px" }}>
+        <div className="nav-wrapper blue-text">
+          <Link to="/" className="brand-logo">
+            Collection-Managament
+          </Link>
+          <ul id="nav-mobile" className="right hide-on-med-and-down">
+            {user_id && (
+              <li>
+                <Link to="/your-collections">Your Collections</Link>
+              </li>
+            )}
+            {user && user.role && user.role.includes("ADMIN") && (
+              <li>
+                <Link to="/admin">Admin</Link>
+              </li>
+            )}
+            {user_id ? (
+              <li
+                className="white-text"
+                onClick={() => {
+                  logout();
+                  setRedirect(true);
+                }}
+              >
+                Logout
+              </li>
+            ) : (
+              <li>
+                <Link to="/autentification">Sign In</Link>
+              </li>
+            )}
+          </ul>
+        </div>
+      </nav>
       <div className="row" style={{ padding: "0 50px" }}>
         <h1>Users</h1>
         <button
@@ -202,7 +263,7 @@ function UsersPage() {
               <th>Role</th>
             </tr>
             {users
-              .filter((user) => user._id === local_id)
+              .filter((user) => user._id === user_id)
               .map((user) => (
                 <tr key={user._id}>
                   <th>
@@ -219,13 +280,20 @@ function UsersPage() {
                   <th>{user.email}</th>
                   <th>{user.isBlocked ? "blocked" : "unblocked"}</th>
                   <th>{user._id}</th>
-                  <th>{user.role}</th>
+                  <th>{user.role.map((rol) => `- ${rol}`)}</th>
+                  <th>
+                    <li onClick={() => updateAdmin(user._id)} className="btn">
+                      {!user.role.includes("ADMIN")
+                        ? "Make Admin"
+                        : "Take Admin"}
+                    </li>
+                  </th>
                 </tr>
               ))}
           </thead>
           <tbody>
             {users
-              .filter((user) => user._id !== local_id)
+              .filter((user) => user._id !== user_id)
               .map((user) => (
                 <tr key={user._id}>
                   <td>
@@ -242,7 +310,14 @@ function UsersPage() {
                   <td>{user.email}</td>
                   <td>{user.isBlocked ? "blocked" : "unblocked"}</td>
                   <td>{user._id}</td>
-                  <td>{user.role}</td>
+                  <td>{user.role.map((rol) => `- ${rol}`)}</td>
+                  <td>
+                    <li onClick={() => updateAdmin(user._id)} className="btn">
+                      {!user.role.includes("ADMIN")
+                        ? "Make Admin"
+                        : "Take Admin"}
+                    </li>
+                  </td>
                 </tr>
               ))}
           </tbody>

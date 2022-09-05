@@ -1,14 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { useHttp } from "../hooks/http.hook";
 import { useMessage } from "../hooks/message.hooks";
 import "./YourCollections.css";
 import Preloader from "./Preloader/Preloader";
 import { Collection } from "./Collection/Collection";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function YourCollections() {
   const stored_id = JSON.parse(localStorage.getItem("collection_userData"));
   const user_id = stored_id ? stored_id.userId : "";
+
+  const { logout, auth } = useContext(AuthContext);
 
   const message = useMessage();
   const { loading, error, request, clearError } = useHttp();
@@ -158,6 +162,15 @@ function YourCollections() {
             {user && user.role && user.role.includes("ADMIN") && (
               <li>
                 <Link to="/admin">Admin</Link>
+              </li>
+            )}
+            {user_id ? (
+              <li className="white-text" onClick={logout}>
+                Logout
+              </li>
+            ) : (
+              <li>
+                <Link to="/autentification">Sign In</Link>
               </li>
             )}
           </ul>

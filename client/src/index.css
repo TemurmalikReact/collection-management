@@ -20,7 +20,7 @@ input, textarea {
   align-items: center;
 }
 
-svg {
+svg, li {
   cursor: pointer;
 }
 

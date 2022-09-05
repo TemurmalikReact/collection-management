@@ -6,10 +6,14 @@ import "./YourCollections.css";
 import Preloader from "./Preloader/Preloader";
 import { Collection } from "./Collection/Collection";
 import Item from "./Item/Item";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function Home() {
   const stored_id = JSON.parse(localStorage.getItem("collection_userData"));
   const user_id = stored_id ? stored_id.userId : "";
+
+  const { logout, auth } = useContext(AuthContext);
 
   const message = useMessage();
   const { loading, error, request, clearError } = useHttp();
@@ -116,6 +120,15 @@ function Home() {
                 <Link to="/admin">Admin</Link>
               </li>
             )}
+            {user_id ? (
+              <li className="white-text" onClick={logout}>
+                Logout
+              </li>
+            ) : (
+              <li>
+                <Link to="/autentification">Sign In</Link>
+              </li>
+            )}
           </ul>
         </div>
       </nav>
@@ -129,6 +142,7 @@ function Home() {
             .sort((a, b) => b.item_length - a.item_length)
             .map((collection) => (
               <Collection
+                small
                 key={collection._id}
                 collection={collection}
                 deleteCollection={() => deleteCollection(collection._id)}

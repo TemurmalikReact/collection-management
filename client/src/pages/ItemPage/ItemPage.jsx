@@ -7,12 +7,16 @@ import { useMessage } from "../../hooks/message.hooks";
 import css from "./ItemPage.module.scss";
 import Preloader from "../Preloader/Preloader";
 import { Modal } from "../Modal/Modal.";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 function ItemPage() {
   const { id } = useParams();
 
   const stored_id = JSON.parse(localStorage.getItem("collection_userData"));
   const user_id = stored_id ? stored_id.userId : "";
+
+  const { logout, auth } = useContext(AuthContext);
 
   const message = useMessage();
   const { error, loading, request, clearError } = useHttp();
@@ -209,6 +213,15 @@ function ItemPage() {
                 <Link to="/admin">Admin</Link>
               </li>
             )}
+            {user_id ? (
+              <li className="white-text" onClick={logout}>
+                Logout
+              </li>
+            ) : (
+              <li>
+                <Link to="/autentification">Sign In</Link>
+              </li>
+            )}
           </ul>
         </div>
       </nav>
@@ -366,39 +379,41 @@ function ItemPage() {
             </div>
           ))}
           {item.required_checkbox.map((item) => (
-            <div className={classNames(css.main__row, css.check)}>
+            <div className={classNames(css.main__row)}>
               <p>
                 {item.name}:
                 <i className="material-icons">
                   {item.value ? "check" : "close"}
-                </i>{" "}
+                </i>
               </p>
-              <div>
-                <button
-                  disabled={
-                    user_id !== owner._id &&
-                    owner &&
-                    !owner.role.includes("ADMIN")
-                  }
-                  onClick={onModalOpen}
-                  className="btn-floating waves-effect waves-light btn"
-                >
-                  <i className="material-icons">edit</i>
-                </button>
-                <button
-                  disabled={
-                    user_id !== owner._id &&
-                    owner &&
-                    !owner.role.includes("ADMIN")
-                  }
-                  onClick={deleteItem}
-                  className="btn-floating waves-effect waves-light red btn"
-                >
-                  <i className="material-icons">delete</i>
-                </button>
-              </div>
             </div>
           ))}
+          <div className={classNames(css.main__row, css.check)}>
+            <div>
+              <button
+                disabled={
+                  user_id !== owner._id &&
+                  owner &&
+                  !owner.role.includes("ADMIN")
+                }
+                onClick={onModalOpen}
+                className="btn-floating waves-effect waves-light btn"
+              >
+                <i className="material-icons">edit</i>
+              </button>
+              <button
+                disabled={
+                  user_id !== owner._id &&
+                  owner &&
+                  !owner.role.includes("ADMIN")
+                }
+                onClick={deleteItem}
+                className="btn-floating waves-effect waves-light red btn"
+              >
+                <i className="material-icons">delete</i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>

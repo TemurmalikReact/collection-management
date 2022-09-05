@@ -6,7 +6,7 @@ import { useMessage } from "../../hooks/message.hooks";
 import Preloader from "../Preloader/Preloader";
 import css from "./Item.module.scss";
 
-function Item({ item: { name, tags, owner_id, _id, deleteItem } }) {
+function Item({ item: { name, tags, owner_id, _id }, deleteItem }) {
   const message = useMessage();
   const { error, loading, request, clearError } = useHttp();
 

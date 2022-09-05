@@ -1,6 +1,8 @@
 import classNames from "classnames";
+import { useContext } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Link, Redirect, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 import { useHttp } from "../../hooks/http.hook";
 import { useMessage } from "../../hooks/message.hooks";
 import Item from "../Item/Item";
@@ -16,6 +18,8 @@ function CollectionPage() {
 
   const message = useMessage();
   const { error, loading, request, clearError } = useHttp();
+
+  const { logout, auth } = useContext(AuthContext);
 
   useEffect(() => {
     message(error);
@@ -163,11 +167,11 @@ function CollectionPage() {
 
   const updateCollection = useCallback(async () => {
     await request(`/api/collections/update`, "POST", {
-      ...modalCollection,
+      ...modalCollection, _id: id
     });
 
     findCollection();
-  }, [findCollection, modalCollection, request]);
+  }, [findCollection, id, modalCollection, request]);
 
   const deleteCollection = useCallback(async () => {
     try {
@@ -249,7 +253,8 @@ function CollectionPage() {
 
   const deleteItem = useCallback(
     async (id) => {
-      await request(`/api/items/delete`, "POST", { id });
+      await request(`/api/items/delete`, "DELETE", { id });
+
       fetchItems();
     },
     [fetchItems, request]
@@ -279,6 +284,15 @@ function CollectionPage() {
             {owner && owner.role && owner.role.includes("ADMIN") && (
               <li>
                 <Link to="/admin">Admin</Link>
+              </li>
+            )}
+            {user_id ? (
+              <li className="white-text" onClick={logout}>
+                Logout
+              </li>
+            ) : (
+              <li>
+                <Link to="/autentification">Sign In</Link>
               </li>
             )}
           </ul>
@@ -357,7 +371,7 @@ function CollectionPage() {
                   <div className={css.footer__row}>
                     <span className={css.footer__text}>
                       <b className={css.owner}>{owner.userName} </b>
-                      <span className={css.length}>30 Collections</span>
+                      <span className={css.length}></span>
                     </span>
                     <div className={css.footer__action}>
                       <button
@@ -400,16 +414,15 @@ function CollectionPage() {
               className={classNames(
                 css.add__name,
                 css.add__input,
-                "input-field"
               )}
             >
-              <label htmlFor="name">Name</label>
               <input
                 onChange={(e) => changeHandler(e)}
                 value={itemForm.name}
                 type="text"
                 name="name"
                 id="name"
+                placeholder="Name"
               />
             </div>
             <div className={css.tags}>
@@ -422,14 +435,13 @@ function CollectionPage() {
                 </div>
               ))}
             </div>
-            <div className={classNames(css.tag, css.add__input, "input-field")}>
-              <label htmlFor="tags">Add Tag to Item</label>
+            <div className={classNames(css.tag, css.add__input)}>
               <input
                 value={tag}
                 onChange={(e) => changeTagHandler(e)}
                 type="text"
                 name="tags"
-                id="tags"
+                placeholder="Add tag"
               />
               <button onClick={() => addTag()} className="btn">
                 +
