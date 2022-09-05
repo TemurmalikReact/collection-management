@@ -27,11 +27,9 @@ function Item({ item: { name, tags, owner_id, _id }, deleteItem }) {
     getOwner(owner_id);
   }, [owner_id, getOwner]);
 
-  if (loading) {
-    return <Preloader />;
-  }
-
   return (
+    <>
+    <Preloader loading={loading} />
     <div className={css.item}>
       <Link to={`/item/${_id}`}>
         <div className={css.image}>
@@ -62,6 +60,7 @@ function Item({ item: { name, tags, owner_id, _id }, deleteItem }) {
         </button>
       </div>
     </div>
+    </>
   );
 }
 

@@ -190,13 +190,9 @@ function ItemPage() {
   if (redirect) {
     return <Redirect to={`/collection/${item.parent_id}`} />;
   }
-
-  if (loading || !parent.name || !owner.userName) {
-    return <Preloader />;
-  }
-
   return (
     <>
+      <Preloader loading={loading || !parent.name || !owner.userName} />
       <nav className="white-text" style={{ padding: "0 55px" }}>
         <div className="nav-wrapper blue-text">
           <Link to="/" className="brand-logo">

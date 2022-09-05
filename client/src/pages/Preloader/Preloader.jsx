@@ -7,8 +7,8 @@ import { useMessage } from "../../hooks/message.hooks";
 import css from "./Preloader.module.scss";
 import preloader from "../../img/preloader.gif";
 
-function Preloader() {
-  return <img className={css.preloader} src={preloader} alt="" />;
+function Preloader({ loading }) {
+  return <img className={classNames(css.preloader, loading ? css.loading : null)} src={preloader} alt="" />;
 }
 
 export default Preloader;

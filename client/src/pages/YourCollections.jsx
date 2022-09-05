@@ -142,12 +142,13 @@ function YourCollections() {
     [fetchCollections, request]
   );
 
-  if (loading) {
-    return <Preloader />;
+  if (!user_id) {
+    return <Redirect to="/" />;
   }
 
   return (
     <>
+    <Preloader loading={loading} />
       <nav className="white-text" style={{ padding: "0 55px" }}>
         <div className="nav-wrapper blue-text">
           <Link to="/" className="brand-logo">
