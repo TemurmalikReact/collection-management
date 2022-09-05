@@ -388,9 +388,7 @@ function ItemPage() {
             <div>
               <button
                 disabled={
-                  user_id !== owner._id &&
-                  owner &&
-                  !owner.role.includes("ADMIN")
+                  user_id !== owner._id
                 }
                 onClick={onModalOpen}
                 className="btn-floating waves-effect waves-light btn"
@@ -399,9 +397,7 @@ function ItemPage() {
               </button>
               <button
                 disabled={
-                  user_id !== owner._id &&
-                  owner &&
-                  !owner.role.includes("ADMIN")
+                  user_id !== owner._id 
                 }
                 onClick={deleteItem}
                 className="btn-floating waves-effect waves-light red btn"

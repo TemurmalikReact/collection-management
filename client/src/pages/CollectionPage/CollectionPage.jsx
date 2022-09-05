@@ -26,6 +26,18 @@ function CollectionPage() {
     clearError();
   }, [clearError, error, message]);
 
+  
+  const [user, setUser] = useState(undefined);
+
+  const getUser = useCallback(async () => {
+    const data = await request(`/api/users/${user_id}`, "GET");
+    setUser(data);
+  }, [request, user_id]);
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
+
   const [redirect, setRedirect] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -167,7 +179,8 @@ function CollectionPage() {
 
   const updateCollection = useCallback(async () => {
     await request(`/api/collections/update`, "POST", {
-      ...modalCollection, _id: id
+      ...modalCollection,
+      _id: id,
     });
 
     findCollection();
@@ -266,7 +279,7 @@ function CollectionPage() {
 
   return (
     <>
-    <Preloader loading={loading} />
+      <Preloader loading={loading} />
       <nav className="white-text" style={{ padding: "0 55px" }}>
         <div className="nav-wrapper blue-text">
           <Link to="/" className="brand-logo">
@@ -373,9 +386,7 @@ function CollectionPage() {
                     <div className={css.footer__action}>
                       <button
                         disabled={
-                          user_id !== collection.owner_id &&
-                          owner &&
-                          !owner.role.includes("ADMIN")
+                          user_id !== collection.owner_id 
                         }
                         onClick={onModalOpen}
                         className="btn-floating waves-effect waves-light btn"
@@ -384,9 +395,7 @@ function CollectionPage() {
                       </button>
                       <button
                         disabled={
-                          user_id !== collection.owner_id &&
-                          owner &&
-                          !owner.role.includes("ADMIN")
+                          user_id !== collection.owner_id 
                         }
                         onClick={deleteCollection}
                         className="btn-floating waves-effect waves-light red btn"
@@ -407,12 +416,7 @@ function CollectionPage() {
         </div>
         <div className={css.items}>
           <div className={classNames(css.add, toggleCreate ? css.open : null)}>
-            <div
-              className={classNames(
-                css.add__name,
-                css.add__input,
-              )}
-            >
+            <div className={classNames(css.add__name, css.add__input)}>
               <input
                 onChange={(e) => changeHandler(e)}
                 value={itemForm.name}
@@ -516,9 +520,7 @@ function CollectionPage() {
           </div>
           <button
             disabled={
-              user_id !== collection.owner_id &&
-              owner &&
-              !owner.role.includes("ADMIN")
+              user_id !== collection.owner_id 
             }
             onClick={onToggleCreate}
             className={classNames(css.add__button)}
