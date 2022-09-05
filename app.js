@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'production') {
 async function start() { 
   try {
     await mongoose.connect(config.get("mongoUri"));
-    app.listen(PORT, () => console.log(`App has been started on port ${PORT}`));
+    app.listen(process.env.PORT || PORT, () => console.log(`App has been started on port ${PORT}`));
 
   } catch (e) {
     console.log("Server error", e.message);
