@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 
 async function start() { 
   try {
-    await mongoose.connect(config.get("mongoUri"));
+    await mongoose.connect(process.env.MONGODB_URI || config.get("mongoUri"));
     app.listen(process.env.PORT || PORT, () => console.log(`App has been started on port ${PORT}`));
 
   } catch (e) {
